@@ -65,22 +65,24 @@ async def similarity(first_word: str, second_word: str):
     try:
         # 단어가 모델에 있는지 확인
         if first_word not in model or second_word not in model:
-            missing_words = []
-            if first_word not in model:
-                missing_words.append(first_word)
-            if second_word not in model:
-                missing_words.append(second_word)
-            raise HTTPException(
-                status_code=404, 
-                detail=f"단어를 찾을 수 없습니다: {', '.join(missing_words)}"
-            )
+            similarity_score = 0.0
+            print("단어를 찾을 수 없습니다 : ", first_word, second_word)
+            return {"similarity": float(similarity_score)}
+            # missing_words = []
+            # if first_word not in model:
+            #     missing_words.append(first_word)
+            # if second_word not in model:
+            #     missing_words.append(second_word)
+            # raise HTTPException(
+            #     status_code=404, 
+            #     detail=f"단어를 찾을 수 없습니다: {', '.join(missing_words)}"
+            # )
             
         similarity_score = model.similarity(first_word, second_word)
         return {"similarity": float(similarity_score)}
-    except HTTPException:
-        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"유사도 계산 중 오류 발생: {str(e)}")
+        print("error 발생 : ", e)
+        return {"similarity": 0.0}
 
 @app.get("/health")
 async def health():
